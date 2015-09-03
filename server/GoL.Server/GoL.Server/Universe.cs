@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GoL.Server.App_Infrastructure;
+using Microsoft.AspNet.SignalR;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,15 @@ namespace GoL.Server
         public List<Cell> CurrentGenCells { get; set; }
         public List<Cell> NextGenCells { get; set; }
         public List<PotentialCell> PotentialCells { get; set; }
+        public bool Running = false;
+
+        public void Start()
+        {
+            Running = true;
+
+            while (Running)
+                PopulateNextGen();
+        }
 
         public Universe(List<Cell> seed)
         {
@@ -20,6 +31,9 @@ namespace GoL.Server
 
         public void PopulateNextGen()
         {
+            PotentialCells = new List<PotentialCell>();
+            NextGenCells = new List<Cell>();
+
             foreach (var cell in CurrentGenCells)
             {
                 if (Rules.ShouldLive(CheckNeighbours(cell)))
@@ -29,6 +43,11 @@ namespace GoL.Server
             var results = PotentialCells.Where(p => Rules.ShouldZombiefy(p.NeighbourCount)).Select(p => p.AsCell());
 
             NextGenCells.AddRange(results);
+
+            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(NextGenCells);
+
+            CurrentGenCells = NextGenCells;
+            NextGenCells.Clear();
         }
 
         private int CheckNeighbours(Cell cell)
