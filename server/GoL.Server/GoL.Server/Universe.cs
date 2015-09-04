@@ -19,14 +19,16 @@ namespace GoL.Server
 
         public static void Start()
         {
-            var universe = new Universe(Seeds.Toad);
+            var seed = Seeds.RPentomino;
+
+            var universe = new Universe(seed);
             Running = true;
             int i = 0;
             while (Running && universe.CurrentGenCells.Count > 0)
             {
                 universe.PopulateNextGen();
                 i++;
-                Thread.Sleep(1000);
+                Thread.Sleep(16);
             }
         }
 
