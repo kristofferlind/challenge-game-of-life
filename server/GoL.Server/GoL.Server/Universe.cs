@@ -20,7 +20,7 @@ namespace GoL.Server
         {
             Running = true;
 
-            while (Running)
+            while (Running && CurrentGenCells.Count > 0)
                 PopulateNextGen();
         }
 
@@ -43,7 +43,7 @@ namespace GoL.Server
             var results = PotentialCells.Where(p => Rules.ShouldZombiefy(p.NeighbourCount)).Select(p => p.AsCell());
 
             NextGenCells.AddRange(results);
-
+            
             GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(NextGenCells);
 
             CurrentGenCells = NextGenCells;

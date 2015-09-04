@@ -6,8 +6,12 @@
     console.log(gameHub);
     gameHub.logging = true;
 
+    gameHub.error(function(error) {
+        console.log(error);
+    });
+
     gameHub.client.nextUniverseStep = function(cells) {
-        console.log(cells);
+        console.log('nextuniversestep', cells);
         GAME.View.render(cells);
     };
 

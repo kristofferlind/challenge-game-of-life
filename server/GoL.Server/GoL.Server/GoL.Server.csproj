@@ -126,7 +126,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Infrastructure\FilteredCamelCasePropertyNamesContractResolver.cs" />
     <Compile Include="App_Infrastructure\GameHub.cs" />
+    <Compile Include="App_Infrastructure\StringExtensions.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Global.asax.cs">

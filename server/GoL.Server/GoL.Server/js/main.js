@@ -3,19 +3,17 @@
 
     //signalr
     var gameHub = $.connection.gameHub;
-    console.log(gameHub);
     gameHub.logging = true;
+    $.connection.hub.logging = true;
+    $.connection.hub.error(function(error) {
+        console.log('signalr error', error);
+    });
 
+    //Next universe step (from signalr)
     gameHub.client.nextUniverseStep = function(cells) {
         GAME.View.render(cells);
     };
 
-    $.connection.hub.start().done(function() {
-        console.log(gameHub);
-    });
-
-    // //test
-    // var testCells = [{x: 5, y: 10}, {x: 3, y: 10}, {x: 5, y: 13}, {x: 15, y: 20}];
-    // GAME.View.render(testCells);
+    $.connection.hub.start();
 
 }(window.GAME = window.GAME || {}))
