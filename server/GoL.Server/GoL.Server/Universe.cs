@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Web.Hosting;
 
@@ -14,25 +15,32 @@ namespace GoL.Server
         public List<Cell> CurrentGenCells { get; set; }
         public List<Cell> NextGenCells { get; set; }
         public List<PotentialCell> PotentialCells { get; set; }
-        public bool Running = false;
+        public static bool Running = false;
 
-        public void Start()
+        public static void Start()
         {
+            var universe = new Universe(Seeds.Toad);
             Running = true;
-
-            while (Running && CurrentGenCells.Count > 0)
-                PopulateNextGen();
+            int i = 0;
+            while (Running && universe.CurrentGenCells.Count > 0)
+            {
+                universe.PopulateNextGen();
+                i++;
+                Thread.Sleep(1000);
+            }
         }
 
         public Universe(List<Cell> seed)
         {
             CurrentGenCells = seed;
+            PotentialCells = new List<PotentialCell>();
+            NextGenCells = new List<Cell>();
         }
 
         public void PopulateNextGen()
         {
-            PotentialCells = new List<PotentialCell>();
-            NextGenCells = new List<Cell>();
+            PotentialCells.Clear();
+            NextGenCells.Clear();
 
             foreach (var cell in CurrentGenCells)
             {
@@ -44,10 +52,10 @@ namespace GoL.Server
 
             NextGenCells.AddRange(results);
             
-            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(NextGenCells);
+            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(CurrentGenCells);
 
             CurrentGenCells = NextGenCells;
-            NextGenCells.Clear();
+            NextGenCells = new List<Cell>();
         }
 
         private int CheckNeighbours(Cell cell)
@@ -57,8 +65,16 @@ namespace GoL.Server
 
             foreach (var neighbour in neighbours)
             {
-                if (CurrentGenCells.Contains(neighbour))
+                //if (CurrentGenCells.Contains(neighbour))
+                //    neighbourCount++;
+
+                var result = (from c in CurrentGenCells
+                    where c.X == neighbour.X
+                    where c.Y == neighbour.Y
+                    select c).ToList();
+                if (result.Count != 0)
                     neighbourCount++;
+
                 else
                 {
                     var potentialCell = (from p in PotentialCells
@@ -91,6 +107,11 @@ namespace GoL.Server
             };
             
             return coordinates;
+        }
+
+        public static void Stop()
+        {
+            Running = false;
         }
     }
 }

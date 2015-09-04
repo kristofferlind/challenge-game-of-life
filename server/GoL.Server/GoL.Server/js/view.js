@@ -33,7 +33,8 @@
 
     GAME.View = {
         //Render window into universe
-        render: function(cells) {
+        render: function (cells) {
+            console.log(cells);
             context.clearRect(0, 0, width, height);
             cells.forEach(function(cell) {
                 if (isInsideContext(cell)) {

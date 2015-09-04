@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
@@ -10,28 +11,18 @@ namespace GoL.Server.App_Infrastructure
     public class GameHub : Hub
     {
         private int userCount = 0;
-        Universe universe = new Universe(
-                new List<Cell>() {
-                    new Cell()
-                    { X=2, Y=10 },
-                    new Cell()
-                    { X=3, Y=10 },
-                    new Cell()
-                    { X=3, Y=11 },
-                    new Cell()
-                    { X=4, Y=10 },
-                    new Cell()
-                    { X=4, Y=11 },
-                    new Cell()
-                    { X=5, Y=11 },
-                });
 
         public override Task OnConnected()
         {
-            userCount++;
 
-            if (!universe.Running) 
-                universe.Start();
+            if (userCount < 1)
+            {
+                var thread = new Thread(Universe.Start);
+                thread.Start();
+            }
+
+
+            userCount++;
 
             return base.OnConnected();
         }
@@ -41,7 +32,10 @@ namespace GoL.Server.App_Infrastructure
             userCount--;
 
             if (userCount < 1)
-                universe.Running = false;
+            {
+                var thread = new Thread(Universe.Stop);
+                thread.Start();
+            }
 
             return base.OnDisconnected(stopCalled);
         }
