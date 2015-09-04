@@ -1,12 +1,8 @@
 ﻿using GoL.Server.App_Infrastructure;
 using Microsoft.AspNet.SignalR;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.Hosting;
 
 namespace GoL.Server
 {
@@ -16,6 +12,7 @@ namespace GoL.Server
         public List<Cell> NextGenCells { get; set; }
         public List<PotentialCell> PotentialCells { get; set; }
         public static bool Running = false;
+        public static int ViewerCount;
 
         public static void Start()
         {

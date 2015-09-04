@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GoL.Server.App_Infrastructure
+﻿namespace GoL.Server.App_Infrastructure
 {
     public static class StringExtensions
     {

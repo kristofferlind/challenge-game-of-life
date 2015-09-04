@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
-using Microsoft.Owin.Cors;
 using GoL.Server.App_Infrastructure;
 using Newtonsoft.Json;
 using Microsoft.AspNet.SignalR;
