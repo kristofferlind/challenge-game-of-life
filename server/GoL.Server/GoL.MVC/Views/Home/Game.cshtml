@@ -1,0 +1,32 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Game</title>
+@*    <script data-main="~/js/main" src="scripts/require.js"></script>*@
+    <link href="~/css/main.css" rel="stylesheet" />
+</head>
+<body>
+    <canvas id="game"></canvas>
+    <div id="controls">
+        <button id="previous">Previous</button>
+        <button id="play">Play</button>
+        <button id="pause">Pause</button>
+        <button id="next">Next</button>
+    </div>
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.0.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script type="text/javascript" src="~/js/config.js"></script>
+    <script type="text/javascript" src="~/js/history.js"></script>
+    <script type="text/javascript" src="~/js/universe.js"></script>
+    <script type="text/javascript" src="~/js/view.js"></script>
+    <script type="text/javascript" src="~/js/main.js"></script>
+</body>
+</html>

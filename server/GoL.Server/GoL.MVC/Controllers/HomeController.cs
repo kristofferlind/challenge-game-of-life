@@ -14,5 +14,10 @@ namespace GoL.MVC.Controllers
 
             return View();
         }
+
+        public ActionResult Game()
+        {
+            return View();
+        }
     }
 }
