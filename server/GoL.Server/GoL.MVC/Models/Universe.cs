@@ -13,18 +13,26 @@ namespace GoL.MVC
         public List<PotentialCell> PotentialCells { get; set; }
         public static bool Running = false;
         public static int ViewerCount;
+        public static int Generation;
 
-        public static void Start()
+        public static void Start(List<Cell> cells = null, int generation = 0)
         {
-            var seed = Seeds.RPentomino;
+            //TODO: implement generation
+            if (cells == null)
+            {
+                cells = Seeds.RPentomino;
+            }
 
-            var universe = new Universe(seed);
+            Generation = generation;
+
+            var universe = new Universe(cells);
             Running = true;
             int i = 0;
             while (Running && universe.CurrentGenCells.Count > 0)
             {
                 universe.PopulateNextGen();
                 i++;
+                Generation += 1;
                 Thread.Sleep(16);
             }
         }
@@ -51,7 +59,7 @@ namespace GoL.MVC
 
             NextGenCells.AddRange(results);
             
-            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(CurrentGenCells);
+            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(CurrentGenCells, Generation);
 
             CurrentGenCells = NextGenCells;
             NextGenCells = new List<Cell>();

@@ -25,7 +25,6 @@
                 if (generation == length) {
                     length += 1;
                 }
-                console.log(array, length);
             }
         };
 

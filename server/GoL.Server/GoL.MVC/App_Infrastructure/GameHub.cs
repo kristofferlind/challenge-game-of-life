@@ -12,7 +12,7 @@ namespace GoL.MVC.App_Infrastructure
 
             if (Universe.ViewerCount < 1)
             {
-                var thread = new Thread(Universe.Start);
+                var thread = new Thread(() => Universe.Start());
                 thread.Start();
             }
 
@@ -37,11 +37,18 @@ namespace GoL.MVC.App_Infrastructure
         public void startSimulation(List<Cell> cells, int generation)
         {
             //TODO: start simulation
+            //Universe.Stop();
+            //Universe.Start(cells, generation);
+            var thread = new Thread(() => Universe.Start(cells, generation));
+            thread.Start();
         }
 
         public void pauseSimulation()
         {
+            //Universe.Stop();
             //TODO: pause simulation
+            var thread = new Thread(Universe.Stop);
+            thread.Start();
         }
     }
 }

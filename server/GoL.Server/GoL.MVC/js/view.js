@@ -44,9 +44,25 @@
         return cell;
     };
 
+    var handleResize = function () {
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
+        cellsWidth = width / config.cellSize;
+        cellsHeight = height / config.cellSize;
+        xOffset = Math.floor(width / 2);
+        yOffset = Math.floor(height /2);
+        cellXOffset = Math.floor((width / config.cellSize) / 2);
+        cellYOffset = Math.floor((height / config.cellSize) / 2);
+        canvas.height = height;
+        canvas.width = width;
+
+        console.log(canvas.width);
+    };
+
 
     GAME.View = {
         getCellByPixelOffset: getCellByPixelOffset,
+        handleResize: handleResize,
         //Render window into universe
         render: function(cells) {
             context.clearRect(0, 0, width, height);

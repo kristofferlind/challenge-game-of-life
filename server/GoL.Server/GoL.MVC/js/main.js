@@ -4,25 +4,22 @@
     var config = GAME.Config,
         events = config.events,
         Universe = GAME.Universe,
-        View = GAME.View;
+        View = GAME.View,
+        paused = false;
 
     //signalr
     var gameHub = $.connection.gameHub;
-    //gameHub.logging = config.DEBUG;
     $.connection.hub.logging = config.DEBUG;
     $.connection.hub.error(function(error) {
         console.log('signalr error', error);
     });
 
-    var simulating = false;
-
     //Next universe step (from signalr)
     gameHub.client.nextUniverseStep = function (cells, generation) {
-        if (simulating) {
-            Universe.cells = cells;
-            Universe.generation = generation || 0;
-            View.render(cells);
-        }
+        Universe.cells = cells;
+        Universe.history.set(generation, cells);
+        Universe.generation = generation || 0;
+        View.render(cells);
     };
 
     $.connection.hub.start();
@@ -41,13 +38,13 @@
     };
 
     var handlePlay = function () {
-        simulating = true;
         gameHub.server.startSimulation(Universe.cells, Universe.generation);
+        paused = false;
     };
 
     var handlePause = function () {
-        simulating = false;
         gameHub.server.pauseSimulation();
+        paused = true;
     };
 
     var handleNext = function () {
@@ -56,11 +53,9 @@
     };
 
     var handleCellToggle = function (event) {
-        if (!simulating) {
-            var cell = View.getCellByPixelOffset(event.offsetX, event.offsetY);
-            Universe.toggleCell(cell);
-            View.render(Universe.cells);
-        }
+        var cell = View.getCellByPixelOffset(event.offsetX, event.offsetY);
+        Universe.toggleCell(cell);
+        View.render(Universe.cells);
     };
 
     //hooks
@@ -69,5 +64,6 @@
     pause.addEventListener(events.CLICK, handlePause, false);
     next.addEventListener(events.CLICK, handleNext, false);
     canvas.addEventListener(events.CLICK, handleCellToggle, false);
+    document.addEventListener(events.RESIZE, GAME.View.handleResize, false);
 
 }(window.GAME = window.GAME || {}))

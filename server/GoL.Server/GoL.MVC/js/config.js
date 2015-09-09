@@ -9,7 +9,8 @@
             canvas: '#game'
         },
         events: {
-            CLICK: 'click'
+            CLICK: 'click',
+            RESIZE: 'resize'
         },
         controls: {
             previous: '#previous',
