@@ -48,5 +48,33 @@ namespace GoL.MVC
             new Cell()
             {X = 3, Y = 4}
         };
+        public static List<Cell> RPentomino2 = new List<Cell>()
+        {
+            new Cell()
+            {X = 9, Y = 2},
+            new Cell()
+            {X = 10, Y = 2},
+            new Cell()
+            {X = 8, Y = 3},
+            new Cell()
+            {X = 9, Y = 3},
+            new Cell()
+            {X = 9, Y = 4}
+        };
+        public static List<Cell> Stairs2 = new List<Cell>()
+        {
+            new Cell()
+            {X = 5, Y = 10},
+            new Cell()
+            {X = 6, Y = 10},
+            new Cell()
+            {X = 6, Y = 11},
+            new Cell()
+            {X = 7, Y = 10},
+            new Cell()
+            {X = 7, Y = 11},
+            new Cell()
+            {X = 8, Y = 11},
+        };
     };
 }

@@ -20,7 +20,7 @@ namespace GoL.MVC.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm Password")]
-        [System.Web.Mvc.Compare("Password", ErrorMessage = "The password and confirmation password does not match")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password does not match")]
         public string ConfirmPassword { get; set; }
     }
 }

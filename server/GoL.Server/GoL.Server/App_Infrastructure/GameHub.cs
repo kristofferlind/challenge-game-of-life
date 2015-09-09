@@ -11,7 +11,7 @@ namespace GoL.Server.App_Infrastructure
 
             if (Universe.ViewerCount < 1)
             {
-                var thread = new Thread(Universe.Start);
+                var thread = new Thread(() => Universe.Start());
                 thread.Start();
             }
 

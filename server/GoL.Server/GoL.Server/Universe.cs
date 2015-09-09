@@ -2,9 +2,7 @@
 using GoL.Server.App_Infrastructure;
 using Microsoft.AspNet.SignalR;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Raven.Abstractions.Extensions;
 
@@ -15,26 +13,35 @@ namespace GoL.Server
         public HashSet<Tuple<int,int>> CurrentGenCells { get; set; }
         public HashSet<Tuple<int,int>> NextGenCells { get; set; }
         public Dictionary<Tuple<int,int>,int> PotentialCells { get; set; }
+        public static int Generation;
+        private static List<Cell> StartSeed;
+
 
         public static bool Running = false;
         public static int ViewerCount;
 
-        public static void Start()
+        public static void Start(List<Cell> seed = null, int generation = 0)
         {
-            var seed = Seeds.RPentomino;
-            seed.AddRange(Seeds.Stairs);
-            seed.AddRange(Seeds.Toad);
-            seed.AddRange(Seeds.RPentomino2);
-            seed.AddRange(Seeds.Stairs2);
+            if (seed != null)
+                StartSeed = seed;
+            else
+            {
+                StartSeed = Seeds.RPentomino;
+                StartSeed.AddRange(Seeds.Stairs);
+                StartSeed.AddRange(Seeds.Toad);
+                StartSeed.AddRange(Seeds.RPentomino2);
+                StartSeed.AddRange(Seeds.Stairs2);
+            }
 
-            var universe = new Universe(seed);
+            Generation = generation;
+
+            var universe = new Universe(StartSeed);
             Running = true;
-            int i = 0;
 
             while (Running && universe.CurrentGenCells.Count > 0)
             {
                 universe.PopulateNextGen();
-                i++;
+                Generation++;
                 
                 Thread.Sleep(16);
             }
@@ -52,7 +59,27 @@ namespace GoL.Server
             }
         }
 
-        public void PopulateNextGen()
+        //internal List<Generation> getHistoryBatch(int startGeneration, int endGeneration)
+        //{
+        //    var universe = new Universe(StartSeed);
+        //    int generationNumber = 0;
+
+        //    List<Generation> historyBatch = new List<Generation>();
+
+        //    while (generationNumber <= endGeneration)
+        //    {
+        //        var cells = HsToList(universe.PopulateNextGen());
+        //        generationNumber += 1;
+        //        if (generationNumber >= startGeneration)
+        //        {
+        //            historyBatch.Add(new Generation() { Cells = cells, GenerationNumber = generationNumber });
+        //        }
+        //    }
+
+        //    return historyBatch;
+        //}
+
+        public HashSet<Tuple<int,int>> PopulateNextGen()
         {
             PotentialCells.Clear();
             NextGenCells.Clear();
@@ -74,6 +101,8 @@ namespace GoL.Server
 
             CurrentGenCells = NextGenCells;
             NextGenCells = new HashSet<Tuple<int, int>>();
+
+            return CurrentGenCells;
         }
 
         private List<Cell> HsToList(HashSet<Tuple<int,int>> currentGenCells)
