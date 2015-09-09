@@ -1,4 +1,5 @@
 ﻿using GoL.MVC.App_Infrastructure;
+using GoL.MVC.Models;
 using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace GoL.MVC
         public static bool Running = false;
         public static int ViewerCount;
         public static int Generation;
+        private static List<Cell> StartSeed;
 
         public static void Start(List<Cell> cells = null, int generation = 0)
         {
@@ -23,6 +25,8 @@ namespace GoL.MVC
             {
                 cells = Seeds.RPentomino;
             }
+
+            StartSeed = cells;
 
             Generation = generation;
 
@@ -47,6 +51,26 @@ namespace GoL.MVC
             }
         }
 
+        internal static List<Generation> getHistoryBatch(int startGeneration, int endGeneration)
+        {
+            var universe = new Universe(StartSeed);
+            int generationNumber = 0;
+
+            List<Generation> historyBatch = new List<Generation>();
+
+            while (generationNumber <= endGeneration)
+            {
+                var cells = universe.PopulateNextGen();
+                generationNumber += 1;
+                if (generationNumber >= startGeneration)
+                {
+                    historyBatch.Add(new Models.Generation() { Cells = cells, GenerationNumber = generationNumber });
+                }
+            }
+
+            return historyBatch;
+        }
+
         public Universe(List<Cell> seed)
         {
             CurrentGenCells = seed;
@@ -54,7 +78,7 @@ namespace GoL.MVC
             NextGenCells = new List<Cell>();
         }
 
-        public void PopulateNextGen()
+        public List<Cell> PopulateNextGen()
         {
             PotentialCells.Clear();
             NextGenCells.Clear();
@@ -73,6 +97,8 @@ namespace GoL.MVC
 
             CurrentGenCells = NextGenCells;
             NextGenCells = new List<Cell>();
+
+            return CurrentGenCells;
         }
 
         private int CheckNeighbours(Cell cell)

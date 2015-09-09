@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using System.Collections.Generic;
+using GoL.MVC.Models;
 
 namespace GoL.MVC.App_Infrastructure
 {
@@ -49,6 +50,11 @@ namespace GoL.MVC.App_Infrastructure
             //TODO: pause simulation
             var thread = new Thread(Universe.Stop);
             thread.Start();
+        }
+
+        public List<Generation> getHistoryBatch(int startGeneration, int endGeneration)
+        {
+            return Universe.getHistoryBatch(startGeneration, endGeneration);
         }
     }
 }
