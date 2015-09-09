@@ -98,8 +98,10 @@
             if (cells) {
                 GAME.Universe.cells = cells;
                 GAME.Universe.generation = generation;
+                return true;
             } else {
                 //load cells from api
+                return false;
             }
         },
         toggleCell: function (cell) {
@@ -113,7 +115,11 @@
         },
         devolve: function () {
             GAME.Universe.generation -= 1;
-            GAME.Universe.loadGeneration(GAME.Universe.generation);
+            var success = GAME.Universe.loadGeneration(GAME.Universe.generation);
+            if (!success) {
+                GAME.Universe.generation += 1;
+            }
+            return success;
         },
         evolve: function () {
             GAME.History.set(GAME.Universe.generation, GAME.Universe.cells);

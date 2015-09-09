@@ -16,7 +16,8 @@
             previous: '#previous',
             play: '#play',
             pause: '#pause',
-            next: '#next'
+            next: '#next',
+            rewind: '#rewind'
         }
     };
 

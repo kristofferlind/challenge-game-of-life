@@ -31,7 +31,7 @@
         return buffer;
     };
 
-    var history = historyBuffer(100);
+    var history = historyBuffer(1000);
 
     GAME.History = {
         get: history.get,

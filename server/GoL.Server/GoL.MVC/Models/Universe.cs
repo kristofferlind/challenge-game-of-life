@@ -1,6 +1,8 @@
 ﻿using GoL.MVC.App_Infrastructure;
 using Microsoft.AspNet.SignalR;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -17,7 +19,6 @@ namespace GoL.MVC
 
         public static void Start(List<Cell> cells = null, int generation = 0)
         {
-            //TODO: implement generation
             if (cells == null)
             {
                 cells = Seeds.RPentomino;
@@ -28,12 +29,21 @@ namespace GoL.MVC
             var universe = new Universe(cells);
             Running = true;
             int i = 0;
+            Stopwatch stopwatch = new Stopwatch();
             while (Running && universe.CurrentGenCells.Count > 0)
             {
+                stopwatch.Start();
                 universe.PopulateNextGen();
                 i++;
                 Generation += 1;
-                Thread.Sleep(16);
+                var elapsed = stopwatch.Elapsed;
+                TimeSpan ideal = new TimeSpan(0, 0, 0, 0, 16);
+                TimeSpan calculated = ideal - elapsed;
+                if (calculated.TotalMilliseconds > 0)
+                {
+                    Thread.Sleep(calculated);
+                }
+                stopwatch.Restart();
             }
         }
 
