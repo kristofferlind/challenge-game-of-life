@@ -50,7 +50,6 @@ namespace GoL.Server
             {
                 CurrentGenCells.Add(new Tuple<int, int>(cell.X, cell.Y));
             }
-            
         }
 
         public void PopulateNextGen()
@@ -60,7 +59,7 @@ namespace GoL.Server
 
             foreach (var cell in CurrentGenCells)
             {
-                if (Rules.ShouldLive(CheckNeighboursHS(cell.Item1, cell.Item2)))
+                if (Rules.ShouldLive(CheckNeighbours(cell.Item1, cell.Item2)))
                     NextGenCells.Add(new Tuple<int, int>(cell.Item1, cell.Item2));
             }
 
@@ -82,7 +81,7 @@ namespace GoL.Server
             return currentGenCells.Select(tuple => new Cell() {X = tuple.Item1, Y = tuple.Item2}).ToList();
         }
 
-        private int CheckNeighboursHS(int x, int y)
+        private int CheckNeighbours(int x, int y)
         {
             var neighbours = GetNeighbours(x, y);
             int neighbourCount = 0;
