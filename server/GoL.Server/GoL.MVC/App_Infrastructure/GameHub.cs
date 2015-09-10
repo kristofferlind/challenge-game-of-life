@@ -13,12 +13,12 @@ namespace GoL.MVC.App_Infrastructure
 
         public override Task OnConnected()
         {
-            if (CurrentUniverse.ViewerCount < 1)
-            {
+            //if (CurrentUniverse.ViewerCount < 1)
+            //{
                 var universe = Universe.Start();
                 Universes.Add(universe);
                 CurrentUniverse = universe;
-            }
+            //}
 
             CurrentUniverse.ViewerCount++;
 
@@ -27,12 +27,15 @@ namespace GoL.MVC.App_Infrastructure
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            CurrentUniverse.ViewerCount--;
+            //if (CurrentUniverse.)
+            //{
+            //    CurrentUniverse.ViewerCount--;
 
-            if (CurrentUniverse.ViewerCount < 1)
-            {
-                CurrentUniverse.Stop();
-            }
+            //    if (CurrentUniverse.ViewerCount < 1)
+            //    {
+            //        CurrentUniverse.Stop();
+            //    }
+            //}
 
             return base.OnDisconnected(stopCalled);
         }
