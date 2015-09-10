@@ -1,4 +1,4 @@
-(function(GAME, undefined) {
+(function (GAME, undefined) {
     'use strict';
 
     var config = GAME.Config,
@@ -6,23 +6,27 @@
         Universe = GAME.Universe,
         View = GAME.View,
         paused = false,
-        rewinding = false;
+        rewinding = false,
+        noop = function () { };
 
     //signalr
     var gameHub = $.connection.gameHub;
     $.connection.hub.logging = config.DEBUG;
-    $.connection.hub.error(function(error) {
+    $.connection.hub.error(function (error) {
         console.log('signalr error', error);
     });
 
     //Next universe step (from signalr)
     gameHub.client.nextUniverseStep = function (cells, generation) {
         Universe.cells = cells;
-        Universe.history.set(generation, cells);
         Universe.generation = generation || 0;
+        Universe.history.set(generation, cells);
         View.render(cells);
-        if (generation == 1000) {
+        if (generation == 100) {
             console.log('local rewind to start no longer possible');
+        }
+        if (generation == 200) {
+            console.log('server rewind now requires fetching a second batch');
         }
     };
 
@@ -67,18 +71,66 @@
     };
 
     var handleRewind = function () {
-        console.log('current generation: ', GAME.Universe.generation);
         rewinding = true;
-        rewind();
+
+        var generation = GAME.Universe.generation;
+
+        if ((generation - 100) > 0) {
+            var from = generation - 200,
+                to = generation - 100;
+            if (from < 0) {
+                from = 0;
+            }
+
+            console.log(from, to);
+
+            var complete = {
+                getHistoryBatch: false,
+                rewind: false,
+                historyBatch: []
+            };
+
+            var nextHistoryBatch = function () {
+                if (complete.getHistoryBatch && complete.rewind) {
+                    GAME.History.clear();
+                    complete.historyBatch.forEach(function (generation) {
+                        GAME.History.set(generation.generationNumber, generation.cells);
+                    });
+                    complete = null;
+                    console.log('history replaced @ generation: ', GAME.Universe.generation);
+                    handleRewind();
+                }
+            };
+
+            gameHub.server.getHistoryBatch(from, to).done(function (historyBatch) {
+                complete.historyBatch = historyBatch;
+                complete.getHistoryBatch = true;
+                nextHistoryBatch();
+            });
+
+            rewind(function () {
+                complete.rewind = true;
+                nextHistoryBatch();
+            }, to);
+        } else {
+            rewind();
+        }
     };
 
-    var rewind = function () {
+    var rewind = function (callback, end) {
         var success = false;
-        if (rewinding) {
+        var end = end || 0;
+
+        //if (rewinding && GAME.Universe.generation > end) {
             success = handlePrevious();
-        }
-        if (success) {
-            window.requestAnimationFrame(rewind);
+        //}
+            if (success && GAME.Universe.generation > end) {
+            window.requestAnimationFrame(function () { rewind(callback, end); });
+        } else {
+            console.log(GAME.Universe.generation);
+            if (callback) {
+                callback();
+            }
         }
     };
 

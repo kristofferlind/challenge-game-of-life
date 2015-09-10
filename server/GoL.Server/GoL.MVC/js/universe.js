@@ -116,15 +116,13 @@
         devolve: function () {
             GAME.Universe.generation -= 1;
             var success = GAME.Universe.loadGeneration(GAME.Universe.generation);
-            if (!success) {
-                GAME.Universe.generation += 1;
-            }
+            //if (success) {
+            //}
             return success;
         },
         evolve: function () {
             GAME.History.set(GAME.Universe.generation, GAME.Universe.cells);
             GAME.Universe.generation += 1;
-            //TODO: evolve universe one step forward
             indexBoard(GAME.Universe.cells);
             var nextGenCells = nextGeneration();
             GAME.Universe.cells = nextGenCells;

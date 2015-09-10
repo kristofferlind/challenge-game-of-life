@@ -61,11 +61,11 @@ namespace GoL.MVC
             while (generationNumber <= endGeneration)
             {
                 var cells = universe.PopulateNextGen();
-                generationNumber += 1;
                 if (generationNumber >= startGeneration)
                 {
                     historyBatch.Add(new Models.Generation() { Cells = cells, GenerationNumber = generationNumber });
                 }
+                generationNumber += 1;
             }
 
             return historyBatch;

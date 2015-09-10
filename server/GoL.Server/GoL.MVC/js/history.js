@@ -25,17 +25,22 @@
                 if (generation == length) {
                     length += 1;
                 }
+            },
+            clear: function () {
+                array = new Array(size);
+                length = 0;
             }
         };
 
         return buffer;
     };
 
-    var history = historyBuffer(1000);
+    var history = historyBuffer(100);
 
     GAME.History = {
         get: history.get,
-        set: history.set
+        set: history.set,
+        clear: history.clear
     };
 
 }(window.GAME = window.GAME || {}))
