@@ -121,10 +121,9 @@
         var success = false;
         var end = end || 0;
 
-        //if (rewinding && GAME.Universe.generation > end) {
-            success = handlePrevious();
-        //}
-            if (success && GAME.Universe.generation > end) {
+        success = handlePrevious();
+
+        if (success && GAME.Universe.generation > end) {
             window.requestAnimationFrame(function () { rewind(callback, end); });
         } else {
             console.log(GAME.Universe.generation);
