@@ -21,7 +21,7 @@ namespace GoL.MVC.Models
         private List<List<Cell>> History { get; set; }
 
         public bool Running = false;
-        public int ViewerCount;
+        public int ViewerCount = 0;
 
         public static Universe Start(List<Cell> seed = null, int generation = 0)
         {
@@ -30,10 +30,10 @@ namespace GoL.MVC.Models
             else
             {
                 StartSeed = Seeds.RPentomino;
-                StartSeed.AddRange(Seeds.Stairs);
-                StartSeed.AddRange(Seeds.Toad);
-                StartSeed.AddRange(Seeds.RPentomino2);
-                StartSeed.AddRange(Seeds.Stairs2);
+                //StartSeed.AddRange(Seeds.Stairs);
+                //StartSeed.AddRange(Seeds.Toad);
+                //StartSeed.AddRange(Seeds.RPentomino2);
+                //StartSeed.AddRange(Seeds.Stairs2);
             }
 
             Generation = generation;
@@ -86,12 +86,11 @@ namespace GoL.MVC.Models
 
             while (generationNumber <= endGeneration)
             {
-                var cells = HsToList(universe.PopulateNextGen());
-
                 if (generationNumber >= startGeneration)
                 {
-                    historyBatch.Add(new Generation() { Cells = cells, GenerationNumber = generationNumber });
+                    historyBatch.Add(new Generation() { Cells = HsToList(universe.CurrentGenCells), GenerationNumber = generationNumber });
                 }
+                universe.PopulateNextGen(false);
                 generationNumber += 1;
             }
 
@@ -103,10 +102,13 @@ namespace GoL.MVC.Models
             // First 1k is cached on the client
             if (History.Count < 2)
                 return StartSeed;
-            return History[History.Count - 2];
+
+            History.RemoveAt(History.Count - 1);
+
+            return History[History.Count - 1];
         }
 
-        public HashSet<Tuple<int,int>> PopulateNextGen()
+        public HashSet<Tuple<int,int>> PopulateNextGen(bool shouldNotify = true)
         {
             PotentialCells.Clear();
             NextGenCells.Clear();
@@ -124,7 +126,10 @@ namespace GoL.MVC.Models
                 NextGenCells.Add(new Tuple<int, int>(result.Key.Item1, result.Key.Item2));
             }
             
-            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(HsToList(CurrentGenCells), Generation);
+            if (shouldNotify)
+            {
+                GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(HsToList(CurrentGenCells), Generation);
+            }
 
             CurrentGenCells = NextGenCells;
             NextGenCells = new HashSet<Tuple<int, int>>();

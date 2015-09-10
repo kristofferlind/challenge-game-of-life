@@ -13,12 +13,12 @@ namespace GoL.MVC.App_Infrastructure
 
         public override Task OnConnected()
         {
-            if (CurrentUniverse.ViewerCount < 1)
-            {
+            //if (CurrentUniverse.ViewerCount < 1)
+            //{
                 var universe = Universe.Start();
                 Universes.Add(universe);
                 CurrentUniverse = universe;
-            }
+            //}
 
             CurrentUniverse.ViewerCount++;
 

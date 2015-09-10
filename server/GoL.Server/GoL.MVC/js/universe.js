@@ -93,6 +93,11 @@
         generation: 0,
         cells: [],
         history: GAME.History,
+        clear: function () {
+            GAME.Universe.generation = 0;
+            GAME.Universe.cells = [];
+            GAME.Universe.history.clear();
+        },
         loadGeneration: function (generation) {
             var cells = GAME.History.get(generation);
             if (cells) {
@@ -100,7 +105,6 @@
                 GAME.Universe.generation = generation;
                 return true;
             } else {
-                //load cells from api
                 return false;
             }
         },
@@ -116,8 +120,7 @@
         devolve: function () {
             GAME.Universe.generation -= 1;
             var success = GAME.Universe.loadGeneration(GAME.Universe.generation);
-            //if (success) {
-            //}
+
             return success;
         },
         evolve: function () {

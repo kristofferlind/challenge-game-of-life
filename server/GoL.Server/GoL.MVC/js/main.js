@@ -22,12 +22,6 @@
         Universe.generation = generation || 0;
         Universe.history.set(generation, cells);
         View.render(cells);
-        if (generation == 100) {
-            console.log('local rewind to start no longer possible');
-        }
-        if (generation == 200) {
-            console.log('server rewind now requires fetching a second batch');
-        }
     };
 
     $.connection.hub.start();
@@ -73,16 +67,14 @@
     var handleRewind = function () {
         rewinding = true;
 
-        var generation = GAME.Universe.generation;
+        var currentGeneration = GAME.Universe.generation;
 
-        if ((generation - 100) > 0) {
-            var from = generation - 200,
-                to = generation - 100;
+        if ((currentGeneration - 1000) > 0) {
+            var from = currentGeneration - 2000,
+                to = currentGeneration - 1000;
             if (from < 0) {
                 from = 0;
             }
-
-            console.log(from, to);
 
             var complete = {
                 getHistoryBatch: false,
@@ -92,12 +84,12 @@
 
             var nextHistoryBatch = function () {
                 if (complete.getHistoryBatch && complete.rewind) {
+                    console.log('fetched history from ', from, ' to ', to, 'batch: ', complete.historyBatch);
                     GAME.History.clear();
                     complete.historyBatch.forEach(function (generation) {
                         GAME.History.set(generation.generationNumber, generation.cells);
                     });
                     complete = null;
-                    console.log('history replaced @ generation: ', GAME.Universe.generation);
                     handleRewind();
                 }
             };
@@ -126,7 +118,6 @@
         if (success && GAME.Universe.generation > end) {
             window.requestAnimationFrame(function () { rewind(callback, end); });
         } else {
-            console.log(GAME.Universe.generation);
             if (callback) {
                 callback();
             }
