@@ -18,6 +18,7 @@ namespace GoL.MVC.Models
         public Dictionary<Tuple<int,int>,int> PotentialCells { get; set; }
         public static int Generation;
         private static List<Cell> StartSeed;
+        private List<List<Cell>> History { get; set; }
 
 
         public static bool Running = false;
@@ -44,8 +45,12 @@ namespace GoL.MVC.Models
             while (Running && universe.CurrentGenCells.Count > 0)
             {
                 universe.PopulateNextGen();
+
+                if (Generation%1000==0)
+                    universe.History.Add(HsToList(universe.CurrentGenCells));
+
                 Generation++;
-                
+
                 Thread.Sleep(16);
             }
         }
@@ -62,9 +67,9 @@ namespace GoL.MVC.Models
             }
         }
 
-        internal static List<Generation> getHistoryBatch(int startGeneration, int endGeneration)
+        internal List<Generation> GetHistoryBatch(int startGeneration, int endGeneration)
         {
-            var universe = new Universe(StartSeed);
+            var universe = new Universe(GetLatestHistory());
             int generationNumber = 0;
 
             List<Generation> historyBatch = new List<Generation>();
@@ -72,14 +77,22 @@ namespace GoL.MVC.Models
             while (generationNumber <= endGeneration)
             {
                 var cells = HsToList(universe.PopulateNextGen());
-                generationNumber += 1;
                 if (generationNumber >= startGeneration)
                 {
                     historyBatch.Add(new Generation() { Cells = cells, GenerationNumber = generationNumber });
                 }
+                generationNumber += 1;
             }
 
             return historyBatch;
+        }
+
+        private List<Cell> GetLatestHistory()
+        {
+            // First 1k is cached on the client
+            if (History.Count < 2)
+                return StartSeed;
+            return History[History.Count - 2];
         }
 
         public HashSet<Tuple<int,int>> PopulateNextGen()
