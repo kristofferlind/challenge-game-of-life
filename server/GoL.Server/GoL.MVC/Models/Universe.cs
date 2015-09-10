@@ -53,11 +53,11 @@ namespace GoL.MVC.Models
         {
             while (Running && this.CurrentGenCells.Count > 0)
             {
-                this.PopulateNextGen();
 
                 if (Generation % 1000 == 0)
                     this.History.Add(HsToList(this.CurrentGenCells));
 
+                this.PopulateNextGen();
                 Generation++;
 
                 Thread.Sleep(16);
@@ -100,7 +100,7 @@ namespace GoL.MVC.Models
         private List<Cell> GetLatestHistory()
         {
             // First 1k is cached on the client
-            if (History.Count < 2)
+            if (History.Count <= 2)
                 return StartSeed;
 
             History.RemoveAt(History.Count - 1);

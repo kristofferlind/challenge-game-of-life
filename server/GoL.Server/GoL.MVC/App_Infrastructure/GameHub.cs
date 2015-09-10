@@ -27,12 +27,15 @@ namespace GoL.MVC.App_Infrastructure
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            CurrentUniverse.ViewerCount--;
+            //if (CurrentUniverse.)
+            //{
+            //    CurrentUniverse.ViewerCount--;
 
-            if (CurrentUniverse.ViewerCount < 1)
-            {
-                CurrentUniverse.Stop();
-            }
+            //    if (CurrentUniverse.ViewerCount < 1)
+            //    {
+            //        CurrentUniverse.Stop();
+            //    }
+            //}
 
             return base.OnDisconnected(stopCalled);
         }
