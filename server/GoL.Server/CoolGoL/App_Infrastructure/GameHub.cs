@@ -8,53 +8,110 @@ namespace CoolGoL.App_Infrastructure
 {
     public class GameHub : Hub
     {
+        public List<HubUser> users = new List<HubUser>();
         public List<Universe> Universes = new List<Universe>();
-        public static Universe CurrentUniverse { get; set; }
+        private HubUser _user;
+
+        public HubUser User
+        {
+            get
+            {
+                if (_user != null)
+                {
+                    return _user;
+                } 
+                var user = Context.User;
+
+                if (user.Identity.IsAuthenticated)
+                {
+                    var hubUser = new HubUser
+                    {
+                        Username = user.Identity.Name,
+                        Universe = new Universe(),
+                        ConnectionId = Context.ConnectionId
+                    };
+
+                    _user = hubUser;
+
+                    return hubUser;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         public override Task OnConnected()
         {
-            //if (CurrentUniverse.ViewerCount < 1)
-            //{
-                var universe = Universe.Start();
-                Universes.Add(universe);
-                CurrentUniverse = universe;
-            //}
+            var user = User;
 
-            CurrentUniverse.ViewerCount++;
+            if (user != null)
+            {
+                users.Add(user);
+                Groups.Add(Context.ConnectionId, user.Username);
+            }
+            else
+            {
+                //if connecting to users stream
+
+                //TODO: connect to stream as observer
+                //increase viewercount
+
+                //else
+
+                //TODO: watch root simulation?
+            }
+
+
+            //old
+            //var universe = Universe.Start();
+            //Universes.Add(universe);
+            //CurrentUniverse = universe;
+
+            //CurrentUniverse.ViewerCount++;
 
             return base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            //CurrentUniverse.ViewerCount--;
-
-            //if (CurrentUniverse.ViewerCount < 1)
+            //if (CurrentUniverse.)
             //{
-            //    CurrentUniverse.Stop();
+            //    CurrentUniverse.ViewerCount--;
+
+            //    if (CurrentUniverse.ViewerCount < 1)
+            //    {
+            //        CurrentUniverse.Stop();
+            //    }
             //}
 
             return base.OnDisconnected(stopCalled);
         }
 
-        public void startSimulation(List<Cell> cells, int generation)
+        //[Authorize]
+        public async Task startSimulation(List<Cell> cells, int generation)
         {
-            //TODO: start simulation
-            //Universe.Stop();
-            //Universe.Start(cells, generation);
-            CurrentUniverse = Universe.Start(cells, generation);
+            User.Universe.Stop();
+            await User.Universe.Start(cells, generation);
         }
 
+        //[Authorize]
         public void pauseSimulation()
         {
-            //Universe.Stop();
-            //TODO: pause simulation
-            CurrentUniverse.Stop();
+            //User.Universe.Running = false;
+            User.Universe.Stop();
         }
 
+        //[Authorize]
         public List<Generation> getHistoryBatch(int startGeneration, int endGeneration)
         {
-            return CurrentUniverse.GetHistoryBatch(startGeneration, endGeneration);
+            return User.Universe.GetHistoryBatch(startGeneration, endGeneration);
+        }
+
+        public void watch(string username)
+        {
+            Groups.Add(Context.ConnectionId, username);
         }
     }
 }

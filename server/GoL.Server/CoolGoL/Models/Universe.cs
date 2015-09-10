@@ -8,6 +8,7 @@ using CoolGoL.App_Infrastructure;
 using CoolGoL.Models;
 using Microsoft.Ajax.Utilities;
 using Raven.Abstractions.Extensions;
+using System.Threading.Tasks;
 
 namespace CoolGoL.Models
 {
@@ -16,14 +17,14 @@ namespace CoolGoL.Models
         public HashSet<Tuple<int,int>> CurrentGenCells { get; set; }
         public HashSet<Tuple<int,int>> NextGenCells { get; set; }
         public Dictionary<Tuple<int,int>,int> PotentialCells { get; set; }
-        public static int Generation;
-        private static List<Cell> StartSeed;
+        public int Generation;
+        private List<Cell> StartSeed;
         private List<List<Cell>> History { get; set; }
 
-        public bool Running = false;
+        public volatile bool Running = false;
         public int ViewerCount;
 
-        public static Universe Start(List<Cell> seed = null, int generation = 0)
+        public async Task Start(List<Cell> seed = null, int generation = 0)
         {
             if (seed != null)
                 StartSeed = seed;
@@ -37,19 +38,13 @@ namespace CoolGoL.Models
             }
 
             Generation = generation;
+            
+            Running = true;
 
-            var universe = new Universe(StartSeed);
-            universe.Running = true;
-
-            //universe.Run();
-
-            var thread = new Thread(() => universe.Run());
-            thread.Start();
-
-            return universe;
+            await Run();
         }
 
-        public void Run()
+        public async Task Run()
         {
             while (Running && this.CurrentGenCells.Count > 0)
             {
@@ -60,12 +55,17 @@ namespace CoolGoL.Models
 
                 Generation++;
 
-                Thread.Sleep(16);
+                await Task.Delay(16);
             }
         }
 
-        public Universe(List<Cell> seed)
+        public Universe(List<Cell> seed = null)
         {
+            if (seed == null)
+            {
+                seed = Seeds.RPentomino;
+            }
+
             CurrentGenCells = new HashSet<Tuple<int, int>>();
             NextGenCells = new HashSet<Tuple<int, int>>();
             PotentialCells = new Dictionary<Tuple<int, int>, int>();
@@ -133,7 +133,7 @@ namespace CoolGoL.Models
             return CurrentGenCells;
         }
 
-        private static List<Cell> HsToList(HashSet<Tuple<int,int>> currentGenCells)
+        private List<Cell> HsToList(HashSet<Tuple<int,int>> currentGenCells)
         {
             return currentGenCells.Select(tuple => new Cell() {X = tuple.Item1, Y = tuple.Item2}).ToList();
         }

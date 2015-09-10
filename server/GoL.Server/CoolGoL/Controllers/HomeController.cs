@@ -14,23 +14,21 @@ namespace CoolGoL.Controllers
             return View();
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        [Authorize]
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-
-        }
+        [System.Web.Mvc.Authorize]
         public ActionResult Game()
         {
+            return View();
+        }
+
+        public ActionResult Observe(string username)
+        {
+            //TODO: if username has a stream running
+
+            //connectionId only available via signalr connection
+            //GlobalHost.ConnectionManager.GetHubContext<GameHub>().Groups.Add(connectionId, username);
+
+            ViewBag.Username = username;
+
             return View();
         }
     }
