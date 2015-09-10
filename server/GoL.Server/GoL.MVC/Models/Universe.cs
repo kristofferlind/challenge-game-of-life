@@ -92,6 +92,7 @@ namespace GoL.MVC.Models
                 {
                     historyBatch.Add(new Generation() { Cells = cells, GenerationNumber = generationNumber });
                 }
+
                 generationNumber += 1;
             }
 

@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoL.MVC", "GoL.MVC\GoL.MVC.csproj", "{0716D055-B4A5-408B-AB37-1706BADC0A82}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoolGoL", "CoolGoL\CoolGoL.csproj", "{A0C81FFE-D414-40F9-BED1-5A9434FD6B12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.AspNet.Identity", "RavenDB.AspNet.Identity\RavenDB.AspNet.Identity\RavenDB.AspNet.Identity.csproj", "{C147FA58-04F8-4139-9E6E-E3D72F3E30EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{0716D055-B4A5-408B-AB37-1706BADC0A82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0716D055-B4A5-408B-AB37-1706BADC0A82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0716D055-B4A5-408B-AB37-1706BADC0A82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0C81FFE-D414-40F9-BED1-5A9434FD6B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0C81FFE-D414-40F9-BED1-5A9434FD6B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0C81FFE-D414-40F9-BED1-5A9434FD6B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0C81FFE-D414-40F9-BED1-5A9434FD6B12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C147FA58-04F8-4139-9E6E-E3D72F3E30EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C147FA58-04F8-4139-9E6E-E3D72F3E30EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C147FA58-04F8-4139-9E6E-E3D72F3E30EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C147FA58-04F8-4139-9E6E-E3D72F3E30EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
