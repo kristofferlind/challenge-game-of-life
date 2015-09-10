@@ -22,7 +22,7 @@ namespace CoolGoL.Models
         private List<List<Cell>> History { get; set; }
 
         public volatile bool Running = false;
-        public int ViewerCount;
+        public int ViewerCount
 
         public async Task Start(List<Cell> seed = null, int generation = 0)
         {
@@ -31,10 +31,10 @@ namespace CoolGoL.Models
             else
             {
                 StartSeed = Seeds.RPentomino;
-                StartSeed.AddRange(Seeds.Stairs);
-                StartSeed.AddRange(Seeds.Toad);
-                StartSeed.AddRange(Seeds.RPentomino2);
-                StartSeed.AddRange(Seeds.Stairs2);
+                //StartSeed.AddRange(Seeds.Stairs);
+                //StartSeed.AddRange(Seeds.Toad);
+                //StartSeed.AddRange(Seeds.RPentomino2);
+                //StartSeed.AddRange(Seeds.Stairs2);
             }
 
             Generation = generation;
@@ -48,11 +48,11 @@ namespace CoolGoL.Models
         {
             while (Running && this.CurrentGenCells.Count > 0)
             {
-                this.PopulateNextGen();
 
                 if (Generation % 1000 == 0)
                     this.History.Add(HsToList(this.CurrentGenCells));
 
+                this.PopulateNextGen();
                 Generation++;
 
                 await Task.Delay(16);
@@ -86,12 +86,12 @@ namespace CoolGoL.Models
 
             while (generationNumber <= endGeneration)
             {
-                var cells = HsToList(universe.PopulateNextGen());
-
                 if (generationNumber >= startGeneration)
                 {
-                    historyBatch.Add(new Generation() { Cells = cells, GenerationNumber = generationNumber });
+                    historyBatch.Add(new Generation() { Cells = HsToList(universe.CurrentGenCells), GenerationNumber = generationNumber });
                 }
+
+                universe.PopulateNextGen(false);
 
                 generationNumber += 1;
             }
@@ -102,12 +102,15 @@ namespace CoolGoL.Models
         private List<Cell> GetLatestHistory()
         {
             // First 1k is cached on the client
-            if (History.Count < 2)
+            if (History.Count <= 2)
                 return StartSeed;
-            return History[History.Count - 2];
+
+            History.RemoveAt(History.Count - 1);
+
+            return History[History.Count - 1];
         }
 
-        public HashSet<Tuple<int,int>> PopulateNextGen()
+        public HashSet<Tuple<int, int>> PopulateNextGen(bool shouldNotify = true)
         {
             PotentialCells.Clear();
             NextGenCells.Clear();
@@ -124,18 +127,21 @@ namespace CoolGoL.Models
             {
                 NextGenCells.Add(new Tuple<int, int>(result.Key.Item1, result.Key.Item2));
             }
-            
-            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(HsToList(CurrentGenCells), Generation);
+
+            if (shouldNotify)
+            {
+                GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(HsToList(CurrentGenCells), Generation);
+            }
 
             CurrentGenCells = NextGenCells;
             NextGenCells = new HashSet<Tuple<int, int>>();
 
             return CurrentGenCells;
         }
-
+        
         private List<Cell> HsToList(HashSet<Tuple<int,int>> currentGenCells)
         {
-            return currentGenCells.Select(tuple => new Cell() {X = tuple.Item1, Y = tuple.Item2}).ToList();
+            return currentGenCells.Select(tuple => new Cell() { X = tuple.Item1, Y = tuple.Item2 }).ToList();
         }
 
         private int CheckNeighbours(int x, int y)
@@ -149,7 +155,7 @@ namespace CoolGoL.Models
                     neighbourCount++;
                 else
                 {
-                    var currentNeighbour = new Tuple<int,int>(neighbour.Item1, neighbour.Item2);
+                    var currentNeighbour = new Tuple<int, int>(neighbour.Item1, neighbour.Item2);
                     int currentNeighbourCount;
                     if (PotentialCells.TryGetValue(currentNeighbour,
                         out currentNeighbourCount))
@@ -165,14 +171,14 @@ namespace CoolGoL.Models
             return neighbourCount;
         }
 
-        private HashSet<Tuple<int,int>> GetNeighbours(int x, int y)
+        private HashSet<Tuple<int, int>> GetNeighbours(int x, int y)
         {
-            var coordinates = new HashSet<Tuple<int,int>>();
+            var coordinates = new HashSet<Tuple<int, int>>();
 
-            coordinates.Add(new Tuple<int, int>( x-1, y-1));
-            coordinates.Add(new Tuple<int, int>(x-1, y));
-            coordinates.Add(new Tuple<int, int>(x-1, y+1));
-            coordinates.Add(new Tuple<int, int>(x, y-1));
+            coordinates.Add(new Tuple<int, int>(x - 1, y - 1));
+            coordinates.Add(new Tuple<int, int>(x - 1, y));
+            coordinates.Add(new Tuple<int, int>(x - 1, y + 1));
+            coordinates.Add(new Tuple<int, int>(x, y - 1));
             coordinates.Add(new Tuple<int, int>(x, y + 1));
             coordinates.Add(new Tuple<int, int>(x + 1, y - 1));
             coordinates.Add(new Tuple<int, int>(x + 1, y));
