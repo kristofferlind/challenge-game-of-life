@@ -1,0 +1,30 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Observing</title>
+    <link href="~/css/main.css" rel="stylesheet" />
+</head>
+<body>
+    <canvas id="game"></canvas>
+
+    <script>
+        window.GAME = window.GAME || {};
+        window.GAME.ObserveUser = @ViewBag.Username;
+    </script>
+
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.0.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script type="text/javascript" src="~/js/config.js"></script>
+    <script type="text/javascript" src="~/js/view.js"></script>
+    <script type="text/javascript" src="~/js/observe.js"></script>
+</body>
+
+</html>

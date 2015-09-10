@@ -246,6 +246,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Cell.cs" />
     <Compile Include="Models\Generation.cs" />
+    <Compile Include="Models\HubUser.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\PotentialCell.cs" />
@@ -270,6 +271,7 @@
     <Content Include="js\config.js" />
     <Content Include="js\history.js" />
     <Content Include="js\main.js" />
+    <Content Include="js\observe.js" />
     <Content Include="js\universe.js" />
     <Content Include="js\vendor\jquery-1.6.4.js" />
     <Content Include="js\vendor\jquery-1.6.4.min.js" />
@@ -326,6 +328,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Game.cshtml" />
+    <Content Include="Views\Home\Observe.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
