@@ -20,8 +20,8 @@ namespace GoL.MVC.Models
         private static List<Cell> StartSeed;
         private List<List<Cell>> History { get; set; }
 
-        public static bool Running = false;
-        public static int ViewerCount;
+        public bool Running = false;
+        public int ViewerCount;
 
         public static Universe Start(List<Cell> seed = null, int generation = 0)
         {
@@ -39,7 +39,7 @@ namespace GoL.MVC.Models
             Generation = generation;
 
             var universe = new Universe(StartSeed);
-            Running = true;
+            universe.Running = true;
 
             //universe.Run();
 

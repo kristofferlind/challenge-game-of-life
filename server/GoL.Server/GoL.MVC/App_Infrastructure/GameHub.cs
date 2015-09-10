@@ -13,23 +13,23 @@ namespace GoL.MVC.App_Infrastructure
 
         public override Task OnConnected()
         {
-            if (Universe.ViewerCount < 1)
+            if (CurrentUniverse.ViewerCount < 1)
             {
                 var universe = Universe.Start();
                 Universes.Add(universe);
                 CurrentUniverse = universe;
             }
 
-            Universe.ViewerCount++;
+            CurrentUniverse.ViewerCount++;
 
             return base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            Universe.ViewerCount--;
+            CurrentUniverse.ViewerCount--;
 
-            if (Universe.ViewerCount < 1)
+            if (CurrentUniverse.ViewerCount < 1)
             {
                 CurrentUniverse.Stop();
             }
@@ -42,8 +42,7 @@ namespace GoL.MVC.App_Infrastructure
             //TODO: start simulation
             //Universe.Stop();
             //Universe.Start(cells, generation);
-            var thread = new Thread(() => Universe.Start(cells, generation));
-            thread.Start();
+            CurrentUniverse = Universe.Start(cells, generation);
         }
 
         public void pauseSimulation()
