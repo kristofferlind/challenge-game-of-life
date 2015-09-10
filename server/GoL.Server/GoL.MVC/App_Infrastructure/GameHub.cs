@@ -8,13 +8,16 @@ namespace GoL.MVC.App_Infrastructure
 {
     public class GameHub : Hub
     {
+        public List<Universe> Universes = new List<Universe>();
+        public static Universe CurrentUniverse { get; set; }
+
         public override Task OnConnected()
         {
-
             if (Universe.ViewerCount < 1)
             {
-                var thread = new Thread(() => Universe.Start());
-                thread.Start();
+                var universe = Universe.Start();
+                Universes.Add(universe);
+                CurrentUniverse = universe;
             }
 
             Universe.ViewerCount++;
@@ -28,8 +31,7 @@ namespace GoL.MVC.App_Infrastructure
 
             if (Universe.ViewerCount < 1)
             {
-                var thread = new Thread(Universe.Stop);
-                thread.Start();
+                CurrentUniverse.Stop();
             }
 
             return base.OnDisconnected(stopCalled);
@@ -48,13 +50,12 @@ namespace GoL.MVC.App_Infrastructure
         {
             //Universe.Stop();
             //TODO: pause simulation
-            var thread = new Thread(Universe.Stop);
-            thread.Start();
+            CurrentUniverse.Stop();
         }
 
         public List<Generation> getHistoryBatch(int startGeneration, int endGeneration)
         {
-            return Universe.getHistoryBatch(startGeneration, endGeneration);
+            return CurrentUniverse.GetHistoryBatch(startGeneration, endGeneration);
         }
     }
 }

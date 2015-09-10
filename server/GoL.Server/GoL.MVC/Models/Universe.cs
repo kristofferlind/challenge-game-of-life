@@ -20,11 +20,10 @@ namespace GoL.MVC.Models
         private static List<Cell> StartSeed;
         private List<List<Cell>> History { get; set; }
 
-
         public static bool Running = false;
         public static int ViewerCount;
 
-        public static void Start(List<Cell> seed = null, int generation = 0)
+        public static Universe Start(List<Cell> seed = null, int generation = 0)
         {
             if (seed != null)
                 StartSeed = seed;
@@ -42,12 +41,22 @@ namespace GoL.MVC.Models
             var universe = new Universe(StartSeed);
             Running = true;
 
-            while (Running && universe.CurrentGenCells.Count > 0)
-            {
-                universe.PopulateNextGen();
+            //universe.Run();
 
-                if (Generation%1000==0)
-                    universe.History.Add(HsToList(universe.CurrentGenCells));
+            var thread = new Thread(() => universe.Run());
+            thread.Start();
+
+            return universe;
+        }
+
+        public void Run()
+        {
+            while (Running && this.CurrentGenCells.Count > 0)
+            {
+                this.PopulateNextGen();
+
+                if (Generation % 1000 == 0)
+                    this.History.Add(HsToList(this.CurrentGenCells));
 
                 Generation++;
 
@@ -60,6 +69,7 @@ namespace GoL.MVC.Models
             CurrentGenCells = new HashSet<Tuple<int, int>>();
             NextGenCells = new HashSet<Tuple<int, int>>();
             PotentialCells = new Dictionary<Tuple<int, int>, int>();
+            History = new List<List<Cell>>();
 
             foreach (var cell in seed)
             {
@@ -67,7 +77,7 @@ namespace GoL.MVC.Models
             }
         }
 
-        internal List<Generation> GetHistoryBatch(int startGeneration, int endGeneration)
+        public List<Generation> GetHistoryBatch(int startGeneration, int endGeneration)
         {
             var universe = new Universe(GetLatestHistory());
             int generationNumber = 0;
@@ -76,11 +86,8 @@ namespace GoL.MVC.Models
 
             while (generationNumber <= endGeneration)
             {
-<<<<<<< HEAD
-                var cells = universe.PopulateNextGen();
-=======
                 var cells = HsToList(universe.PopulateNextGen());
->>>>>>> origin/master
+
                 if (generationNumber >= startGeneration)
                 {
                     historyBatch.Add(new Generation() { Cells = cells, GenerationNumber = generationNumber });
@@ -173,7 +180,7 @@ namespace GoL.MVC.Models
             return coordinates;
         }
 
-        public static void Stop()
+        public void Stop()
         {
             Running = false;
         }
