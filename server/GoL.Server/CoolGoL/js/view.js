@@ -84,7 +84,7 @@
     var renderSeedList = function (seeds, callback) {
         seedList.innerHTML = "";
 
-        for (name in seeds) {
+        for (name in seeds) { 
             var seed = {
                 name: name,
                 cells: seeds[name]
@@ -100,7 +100,7 @@
         //});
     };
     
-    var createSeedElement = function (seed, callback) {
+    var createSeedElement = function (seed) {
         var seedElement = document.createElement("li"),
         seedLink = document.createElement("a");
         seedLink.href = "#";
@@ -109,7 +109,6 @@
         seedLink.onclick = function (event) {
             event.preventDefault();
             GAME.View.play(seed.cells);
-            //callback(seed.cells);
         };
 
         seedElement.appendChild(seedLink);

@@ -5,9 +5,12 @@
         events = config.events,
         Universe = GAME.Universe,
         View = GAME.View,
-        paused = false,
-        rewinding = false,
         noop = function () { };
+
+    var state = {
+        playing: false,
+        rewinding: false
+    };
 
     //signalr
     var gameHub = $.connection.gameHub;
@@ -22,12 +25,6 @@
         Universe.generation = generation || 0;
         Universe.history.set(generation, cells);
         View.render(cells);
-        if (generation == 100) {
-            console.log('local rewind to start no longer possible');
-        }
-        if (generation == 200) {
-            console.log('server rewind now requires fetching a second batch');
-        }
     };
 
     gameHub.client.updateUserList = function (users) {
@@ -41,6 +38,7 @@
     });
 
     GAME.View.registerPlay(function (cells) {
+        state.playing = true;
         gameHub.server.startSimulation(cells, 0);
     });
 
@@ -54,78 +52,89 @@
         canvas = document.querySelector(config.elements.canvas);
 
     var handlePrevious = function () {
-        var status = Universe.devolve();
-        View.render(Universe.cells);
-        return status;
+        if (!state.playing) {
+            var status = Universe.devolve();
+            View.render(Universe.cells);
+            return status;
+        }
     };
 
     var handlePlay = function () {
-        gameHub.server.startSimulation(Universe.cells, Universe.generation);
-        paused = false;
-        rewinding = false;
+        if (!state.rewinding) {
+            state.playing = true;
+            gameHub.server.startSimulation(Universe.cells, Universe.generation);
+        }
     };
 
     var handlePause = function () {
         gameHub.server.pauseSimulation();
-        paused = true;
-        rewinding = false;
+        state.rewinding = false;
+        state.playing = false;
     };
 
     var handleNext = function () {
-        Universe.evolve();
-        View.render(Universe.cells);
+        if (!(state.playing && state.rewinding)) {
+            Universe.evolve();
+            View.render(Universe.cells);
+        }
     };
 
     var handleCellToggle = function (event) {
-        var cell = View.getCellByPixelOffset(event.offsetX, event.offsetY);
-        Universe.toggleCell(cell);
-        View.render(Universe.cells);
+        if (!(state.playing && state.rewinding)) {
+            var cell = View.getCellByPixelOffset(event.offsetX, event.offsetY);
+            Universe.toggleCell(cell);
+            View.render(Universe.cells);
+        }
     };
 
     var handleRewind = function () {
-        rewinding = true;
+        if (!state.playing) {
+            state.rewinding = true;
 
-        var generation = GAME.Universe.generation;
+            var generation = GAME.Universe.generation;
 
-        if ((generation - 100) > 0) {
-            var from = generation - 200,
-                to = generation - 100;
-            if (from < 0) {
-                from = 0;
-            }
-
-            console.log(from, to);
-
-            var complete = {
-                getHistoryBatch: false,
-                rewind: false,
-                historyBatch: []
-            };
-
-            var nextHistoryBatch = function () {
-                if (complete.getHistoryBatch && complete.rewind) {
-                    GAME.History.clear();
-                    complete.historyBatch.forEach(function (generation) {
-                        GAME.History.set(generation.generationNumber, generation.cells);
-                    });
-                    complete = null;
-                    console.log('history replaced @ generation: ', GAME.Universe.generation);
-                    handleRewind();
+            if ((generation - 1000) > 0) {
+                var from = generation - 2000,
+                    to = generation - 1000;
+                if (from < 0) {
+                    from = 0;
                 }
-            };
 
-            gameHub.server.getHistoryBatch(from, to).done(function (historyBatch) {
-                complete.historyBatch = historyBatch;
-                complete.getHistoryBatch = true;
-                nextHistoryBatch();
-            });
+                console.log(from, to);
 
-            rewind(function () {
-                complete.rewind = true;
-                nextHistoryBatch();
-            }, to);
-        } else {
-            rewind();
+                var complete = {
+                    getHistoryBatch: false,
+                    rewind: false,
+                    historyBatch: []
+                };
+
+                var nextHistoryBatch = function () {
+                    if (complete.getHistoryBatch && complete.rewind) {
+                        GAME.History.clear();
+                        complete.historyBatch.forEach(function (generation) {
+                            GAME.History.set(generation.generationNumber, generation.cells);
+                        });
+                        complete = null;
+                        console.log('history replaced @ generation: ', GAME.Universe.generation);
+                        handleRewind();
+                    }
+                };
+
+                gameHub.server.getHistoryBatch(from, to).done(function (historyBatch) {
+                    complete.historyBatch = historyBatch;
+                    complete.getHistoryBatch = true;
+                    nextHistoryBatch();
+                });
+
+                rewind(function () {
+                    complete.rewind = true;
+                    nextHistoryBatch();
+                }, to);
+            } else {
+                rewind(function () {
+                    state.rewinding = false;
+                });
+            }
         }
     };
 
