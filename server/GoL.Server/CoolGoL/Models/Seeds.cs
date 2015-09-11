@@ -4,6 +4,16 @@ namespace CoolGoL
 {
     public class Seeds
     {
+        public List<List<Cell>> AllSeeds;
+
+        public Seeds()
+        {
+            AllSeeds = new List<List<Cell>>();
+            AllSeeds.Add(Stairs);
+            AllSeeds.Add(Toad);
+            AllSeeds.Add(RPentomino);
+        }
+
         public static List<Cell> Stairs = new List<Cell>()
         {
             new Cell()
@@ -19,6 +29,7 @@ namespace CoolGoL
             new Cell()
             {X = 5, Y = 11},
         };
+        
 
         public static List<Cell> Toad = new List<Cell>()
         {

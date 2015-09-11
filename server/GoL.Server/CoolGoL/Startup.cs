@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using CoolGoL.App_Infrastructure;
 using CoolGoL.Models;
 using Microsoft.AspNet.SignalR;
-using MvcPWy.Models;
+
 
 [assembly: OwinStartup(typeof(CoolGoL.Startup))]
 
