@@ -41,7 +41,12 @@ namespace CoolGoL.Models
             }
 
             Generation = generation;
-            
+
+            foreach (var cell in StartSeed)
+            {
+                CurrentGenCells.Add(new Tuple<int, int>(cell.X, cell.Y));
+            }
+
             Running = true;
             
             await Run();
@@ -69,10 +74,10 @@ namespace CoolGoL.Models
 
         public Universe(List<Cell> seed = null, string username = null)
         {
-            if (seed == null)
-            {
-                seed = Seeds.RPentomino;
-            }
+            //if (seed == null)
+            //{
+            //    seed = Seeds.RPentomino;
+            //}
 
             this.username = username;
 
@@ -81,10 +86,10 @@ namespace CoolGoL.Models
             PotentialCells = new Dictionary<Tuple<int, int>, int>();
             History = new List<List<Cell>>();
 
-            foreach (var cell in seed)
-            {
-                CurrentGenCells.Add(new Tuple<int, int>(cell.X, cell.Y));
-            }
+            //foreach (var cell in seed)
+            //{
+            //    CurrentGenCells.Add(new Tuple<int, int>(cell.X, cell.Y));
+            //}
         }
 
         public List<Generation> GetHistoryBatch(int startGeneration, int endGeneration)

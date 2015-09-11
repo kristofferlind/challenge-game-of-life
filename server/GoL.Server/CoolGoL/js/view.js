@@ -106,7 +106,9 @@
         seedLink.text = seed.name;
 
         seedLink.onclick = function (event) {
-            callback(seed.cells);
+            event.preventDefault();
+            GAME.View.play(seed.cells);
+            //callback(seed.cells);
         };
 
         seedElement.appendChild(seedLink);
@@ -116,10 +118,10 @@
     GAME.View = {
         getCellByPixelOffset: getCellByPixelOffset,
         handleResize: handleResize,
-        //play: null,
-        //registerPlay: function (func) {
-        //    GAME.View.play = func;
-        //},
+        play: null,
+        registerPlay: function (func) {
+            GAME.View.play = func;
+        },
         //Render window into universe
         renderUserList: renderUserList,
         renderSeedList: renderSeedList,
