@@ -28,6 +28,8 @@ namespace CoolGoL.Models
 
         public async Task Start(List<Cell> seed = null, int generation = 0)
         {
+            CurrentGenCells.Clear();
+
             if (seed != null)
                 StartSeed = seed;
             else
