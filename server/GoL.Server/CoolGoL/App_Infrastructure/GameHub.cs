@@ -96,9 +96,9 @@ namespace CoolGoL.App_Infrastructure
             //        CurrentUniverse.Stop();
             //    }
             //}
-            //var user = UserList.Users.Find(u => u.Username == User.Username);
-            //UserList.Users.Remove(user);
-            UserList.Users.Remove(User);
+            var user = UserList.Users.Find(u => u.Username == User.Username);
+            UserList.Users.Remove(user);
+            //UserList.Users.Remove(User);
             UpdateUserlist();
             return base.OnDisconnected(stopCalled);
         }

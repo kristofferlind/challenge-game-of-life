@@ -44,8 +44,6 @@ namespace CoolGoL.Models
             
             Running = true;
             
-            //await Task.Run(async () => await Run());
-            //thread = new Thread(async () => await Run());
             await Run();
         }
 
@@ -142,7 +140,6 @@ namespace CoolGoL.Models
 
             if (shouldNotify)
             {
-                //GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(HsToList(CurrentGenCells), Generation);
                 GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.Group(username).nextUniverseStep(HsToList(CurrentGenCells), Generation);
             }
 
