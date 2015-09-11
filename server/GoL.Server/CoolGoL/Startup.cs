@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using CoolGoL.App_Infrastructure;
 using CoolGoL.Models;
 using Microsoft.AspNet.SignalR;
+using MvcPWy.Models;
 
 [assembly: OwinStartup(typeof(CoolGoL.Startup))]
 
@@ -26,7 +27,8 @@ namespace CoolGoL
                     AssembliesToInclude =
                     {
                         typeof (Startup).Assembly,
-                        typeof (Cell).Assembly
+                        typeof (Cell).Assembly,
+                        typeof (SimpleUser).Assembly
                     }
                 }
             };

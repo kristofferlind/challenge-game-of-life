@@ -2,7 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc.Html;
 using CoolGoL.Models;
+using MvcPWy.Models;
 
 namespace CoolGoL.App_Infrastructure
 {
@@ -13,8 +16,6 @@ namespace CoolGoL.App_Infrastructure
 
     public class GameHub : Hub
     {
-        public List<HubUser> users = new List<HubUser>();
-        public List<Universe> Universes = new List<Universe>();
         private HubUser _user;
 
         public HubUser User
@@ -57,9 +58,9 @@ namespace CoolGoL.App_Infrastructure
 
             if (user != null)
             {
-                users.Add(user);
                 UserList.Users.Add(user);
                 Groups.Add(Context.ConnectionId, user.Username);
+                UpdateUserlist();
             }
             else
             {
@@ -95,7 +96,7 @@ namespace CoolGoL.App_Infrastructure
             //        CurrentUniverse.Stop();
             //    }
             //}
-
+            UpdateUserlist();
             return base.OnDisconnected(stopCalled);
         }
 
@@ -104,6 +105,7 @@ namespace CoolGoL.App_Infrastructure
         {
             var user = UserList.Users.Find(u => u.Username == User.Username);
             await user.Universe.Start(cells, generation);
+            UpdateUserlist();
         }
 
         //[Authorize]
@@ -111,6 +113,7 @@ namespace CoolGoL.App_Infrastructure
         {
             var user = UserList.Users.Find(u => u.Username == User.Username);
             user.Universe.Stop();
+            UpdateUserlist();
         }
 
         //[Authorize]
@@ -122,6 +125,13 @@ namespace CoolGoL.App_Infrastructure
         public void watch(string username)
         {
             Groups.Add(Context.ConnectionId, username);
+        }
+
+        public void UpdateUserlist()
+        {
+            var simpleUsers = from u in UserList.Users
+                              select new { u.Username, u.Universe.Running };
+            GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.UpdateUserlist(simpleUsers);
         }
     }
 }
