@@ -107,16 +107,23 @@ namespace CoolGoL.App_Infrastructure
         public async Task startSimulation(List<Cell> cells, int generation)
         {
             var user = UserList.Users.Find(u => u.Username == User.Username);
-            await user.Universe.Start(cells, generation);
-            UpdateUserlist();
+            if (!user.Universe.Running)
+            {
+                await user.Universe.Start(cells, generation);
+                UpdateUserlist();
+            }
         }
 
         //[Authorize]
         public void pauseSimulation()
         {
             var user = UserList.Users.Find(u => u.Username == User.Username);
-            user.Universe.Stop();
-            UpdateUserlist();
+            if (user.Universe.Running)
+            {
+                user.Universe.Stop();
+                UpdateUserlist();
+            }
+            
         }
 
         //[Authorize]
