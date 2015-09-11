@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc.Html;
 using CoolGoL.Models;
-using MvcPWy.Models;
 
 namespace CoolGoL.App_Infrastructure
 {
@@ -60,6 +59,7 @@ namespace CoolGoL.App_Infrastructure
             {
                 UserList.Users.Add(user);
                 Groups.Add(Context.ConnectionId, user.Username);
+
                 UpdateUserlist();
             }
             else
@@ -96,6 +96,9 @@ namespace CoolGoL.App_Infrastructure
             //        CurrentUniverse.Stop();
             //    }
             //}
+            //var user = UserList.Users.Find(u => u.Username == User.Username);
+            //UserList.Users.Remove(user);
+            UserList.Users.Remove(User);
             UpdateUserlist();
             return base.OnDisconnected(stopCalled);
         }
@@ -132,6 +135,12 @@ namespace CoolGoL.App_Infrastructure
             var simpleUsers = from u in UserList.Users
                               select new { u.Username, u.Universe.Running };
             GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.UpdateUserlist(simpleUsers);
+        }
+
+        public Dictionary<string,List<Cell>> GetSeeds()
+        {
+            var seeds = new Seeds();
+            return seeds.AllSeeds;
         }
     }
 }

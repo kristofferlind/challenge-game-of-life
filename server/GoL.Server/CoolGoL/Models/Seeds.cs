@@ -4,14 +4,14 @@ namespace CoolGoL
 {
     public class Seeds
     {
-        public List<List<Cell>> AllSeeds;
+        public Dictionary<string,List<Cell>> AllSeeds;
 
         public Seeds()
         {
-            AllSeeds = new List<List<Cell>>();
-            AllSeeds.Add(Stairs);
-            AllSeeds.Add(Toad);
-            AllSeeds.Add(RPentomino);
+            AllSeeds = new Dictionary<string,List<Cell>>();
+            AllSeeds.Add("Stairs", Stairs);
+            AllSeeds.Add("Toad", Toad);
+            AllSeeds.Add("RPentomino", RPentomino);
         }
 
         public static List<Cell> Stairs = new List<Cell>()
