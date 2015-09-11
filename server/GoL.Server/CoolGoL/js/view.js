@@ -62,7 +62,8 @@
     };
 
     var renderUserList = function (users) {
-        userList.innerHtml = "";
+        console.log(users);
+        userList.innerHTML = "";
         users.forEach(function(user) {
             var userElement = createUserElement(user);
             userList.appendChild(userElement);
@@ -81,7 +82,7 @@
     }
 
     var renderSeedList = function (seeds, callback) {
-        seedList.innerHtml = "";
+        seedList.innerHTML = "";
 
         for (name in seeds) {
             var seed = {

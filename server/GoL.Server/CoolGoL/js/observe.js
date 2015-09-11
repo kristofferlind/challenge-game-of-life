@@ -16,6 +16,9 @@
         View.render(cells);
     };
 
+    gameHub.client.updateUserList = function (users) {
+        GAME.View.renderUserList(users);
+    };
 
     $.connection.hub.start().done(function () {
         gameHub.server.watch(GAME.ObserveUser);
