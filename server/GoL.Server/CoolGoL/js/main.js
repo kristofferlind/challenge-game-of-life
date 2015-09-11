@@ -30,7 +30,20 @@
         }
     };
 
-    $.connection.hub.start();
+    gameHub.client.updateUserList = function (users) {
+        console.log(users);
+        GAME.View.renderUserList(users);
+    };
+
+    $.connection.hub.start().done(function () {
+        gameHub.server.getSeeds().done(function (seeds) {
+            console.log(seeds);
+            GAME.View.renderSeedList(seeds, function (event) {
+                event.preventDefault();
+                gameHub.server.startSimulation(cells, 0);
+            });
+        });
+    });
 
     //controls
     var controls = config.controls,

@@ -6,7 +6,9 @@
         cellSize: 3,
         cellColor: '#000000',
         elements: {
-            canvas: '#game'
+            canvas: '#game',
+            userList: '#user-list',
+            seedList: '#seed-list'
         },
         events: {
             CLICK: 'click',

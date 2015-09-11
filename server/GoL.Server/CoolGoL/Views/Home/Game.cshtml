@@ -9,7 +9,6 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Game</title>
-@*    <script data-main="~/js/main" src="scripts/require.js"></script>*@
     <link href="~/css/main.css" rel="stylesheet" />
 </head>
 <body>
@@ -21,7 +20,11 @@
         <button id="pause">Pause</button>
         <button id="next">Next</button>
     </div>
-    @*<script src="~/Scripts/jquery-1.10.2.js"></script>*@
+    <div id="user-box">
+        <h3>Current Users</h3>
+        <ul id="user-list"></ul>
+    </div>
+    <ul id="seed-list"></ul>
     <script src="~/Scripts/jquery-2.1.1.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.0.js"></script>
     <script src="~/signalr/hubs"></script>

@@ -13,6 +13,8 @@
         yOffset = Math.floor(height /2),
         cellXOffset = Math.floor((width / config.cellSize) / 2),
         cellYOffset = Math.floor((height / config.cellSize) / 2),
+        userList = document.querySelector(config.elements.userList),
+        seedList = document.querySelector(config.elements.seedList),
         //Render cell on canvas
         renderCell = function(cell) {
             context.beginPath();
@@ -59,11 +61,68 @@
         console.log(canvas.width);
     };
 
+    var renderUserList = function (users) {
+        userList.innerHtml = "";
+        users.forEach(function(user) {
+            var userElement = createUserElement(user);
+            userList.appendChild(userElement);
+        });
+    };
+
+    var createUserElement = function (user) {
+        var userElement = document.createElement("li"),
+            userLink = document.createElement("a");
+        
+        userLink.href = "https://localhost:44306/home/observe/?" + user.username;
+        userLink.text = user.username;
+
+        userElement.appendChild(userLink);
+        return userElement;
+    }
+
+    var renderSeedList = function (seeds, callback) {
+        seedList.innerHtml = "";
+
+        for (name in seeds) {
+            var seed = {
+                name: name,
+                cells: seeds[name]
+            };
+
+            var seedElement = createSeedElement(seed);
+            seedList.appendChild(seedElement);
+        }
+
+        //seeds.forEach(function (seed) {
+        //    var seedElement = createSeedElement(seed);
+        //    seedList.appendChild(seedElement);
+        //});
+    };
+    
+    var createSeedElement = function (seed, callback) {
+        var seedElement = document.createElement("li"),
+        seedLink = document.createElement("a");
+        seedLink.href = "#";
+        seedLink.text = seed.name;
+
+        seedLink.onclick = function (event) {
+            callback(seed.cells);
+        };
+
+        seedElement.appendChild(seedLink);
+        return seedElement;
+    };
 
     GAME.View = {
         getCellByPixelOffset: getCellByPixelOffset,
         handleResize: handleResize,
+        //play: null,
+        //registerPlay: function (func) {
+        //    GAME.View.play = func;
+        //},
         //Render window into universe
+        renderUserList: renderUserList,
+        renderSeedList: renderSeedList,
         render: function(cells) {
             context.clearRect(0, 0, width, height);
             cells.forEach(function(cell) {
