@@ -139,8 +139,9 @@ namespace CoolGoL.App_Infrastructure
 
         public void UpdateUserlist()
         {
-            var simpleUsers = from u in UserList.Users
-                              select new { u.Username, u.Universe.Running };
+            var simpleUsers = UserList.Users.GroupBy(u => u.Username)
+                .Select(grp => grp.First())
+                .ToList();
             GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.UpdateUserlist(simpleUsers);
         }
 

@@ -32,8 +32,7 @@ namespace CoolGoL.Models
                 StartSeed = seed;
             else
             {
-                var seeds = new Seeds();
-                StartSeed = seeds.AllSeeds.SelectMany(x => x.Value).ToList();
+                StartSeed = Seeds.RPentomino;
                 //StartSeed.AddRange(Seeds.Stairs);
                 //StartSeed.AddRange(Seeds.Toad);
                 //StartSeed.AddRange(Seeds.RPentomino2);
