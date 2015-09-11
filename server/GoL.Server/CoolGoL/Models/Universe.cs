@@ -20,9 +20,11 @@ namespace CoolGoL.Models
         public int Generation;
         private List<Cell> StartSeed;
         private List<List<Cell>> History { get; set; }
+        public Thread thread;
+        private string username;
 
         public volatile bool Running = false;
-        public int ViewerCount
+        public int ViewerCount;
 
         public async Task Start(List<Cell> seed = null, int generation = 0)
         {
@@ -40,13 +42,15 @@ namespace CoolGoL.Models
             Generation = generation;
             
             Running = true;
-
+            
+            //await Task.Run(async () => await Run());
+            //thread = new Thread(async () => await Run());
             await Run();
         }
 
         public async Task Run()
         {
-            while (Running && this.CurrentGenCells.Count > 0)
+            while (shouldContinue())
             {
 
                 if (Generation % 1000 == 0)
@@ -59,12 +63,19 @@ namespace CoolGoL.Models
             }
         }
 
-        public Universe(List<Cell> seed = null)
+        private bool shouldContinue()
+        {
+            return (Running && this.CurrentGenCells.Count > 0);
+        }
+
+        public Universe(List<Cell> seed = null, string username = null)
         {
             if (seed == null)
             {
                 seed = Seeds.RPentomino;
             }
+
+            this.username = username;
 
             CurrentGenCells = new HashSet<Tuple<int, int>>();
             NextGenCells = new HashSet<Tuple<int, int>>();
@@ -130,7 +141,8 @@ namespace CoolGoL.Models
 
             if (shouldNotify)
             {
-                GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(HsToList(CurrentGenCells), Generation);
+                //GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.All.nextUniverseStep(HsToList(CurrentGenCells), Generation);
+                GlobalHost.ConnectionManager.GetHubContext<GameHub>().Clients.Group(username).nextUniverseStep(HsToList(CurrentGenCells), Generation);
             }
 
             CurrentGenCells = NextGenCells;

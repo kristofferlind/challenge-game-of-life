@@ -6,6 +6,11 @@ using CoolGoL.Models;
 
 namespace CoolGoL.App_Infrastructure
 {
+    public static class UserList
+    {
+        public static List<HubUser> Users = new List<HubUser>();
+    }
+
     public class GameHub : Hub
     {
         public List<HubUser> users = new List<HubUser>();
@@ -24,12 +29,16 @@ namespace CoolGoL.App_Infrastructure
 
                 if (user.Identity.IsAuthenticated)
                 {
+                    var universe = new Universe(null, user.Identity.Name);
+
                     var hubUser = new HubUser
                     {
                         Username = user.Identity.Name,
-                        Universe = new Universe(),
-                        ConnectionId = Context.ConnectionId
+                        Universe = universe,
+                        ConnectionId = Context.ConnectionId,
                     };
+
+                    //UserList.Users.Add(hubUser);
 
                     _user = hubUser;
 
@@ -49,6 +58,7 @@ namespace CoolGoL.App_Infrastructure
             if (user != null)
             {
                 users.Add(user);
+                UserList.Users.Add(user);
                 Groups.Add(Context.ConnectionId, user.Username);
             }
             else
@@ -92,15 +102,15 @@ namespace CoolGoL.App_Infrastructure
         //[Authorize]
         public async Task startSimulation(List<Cell> cells, int generation)
         {
-            User.Universe.Stop();
-            await User.Universe.Start(cells, generation);
+            var user = UserList.Users.Find(u => u.Username == User.Username);
+            await user.Universe.Start(cells, generation);
         }
 
         //[Authorize]
         public void pauseSimulation()
         {
-            //User.Universe.Running = false;
-            User.Universe.Stop();
+            var user = UserList.Users.Find(u => u.Username == User.Username);
+            user.Universe.Stop();
         }
 
         //[Authorize]
